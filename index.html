@@ -1,192 +1,287 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Catálogo Gamer</title>
-<link rel="icon" href="fav.ico" type="image/x-icon" />
-<link rel="stylesheet" href="style.css" />
-<!-- Firebase SDKs (compat) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo Gamer</title>
+  <meta name="description" content="Catálogo de produtos gamer com menu personalizável, admin exclusivo e integração Firebase.">
+  <link rel="icon" type="image/x-icon" href="fav.ico">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- ===== HEADER / MENU ===== -->
-<header class="site-header">
-  <div class="header-inner">
-    <div class="brand">
-      <img id="logoSquare" class="logo-square" alt="Logo" />
-      <img id="logoWide" class="logo-wide" alt="Marca" />
-    </div>
+  <!-- Header / Navbar -->
+  <header id="main-header">
+    <nav>
+      <a href="#" class="brand-area">
+        <img id="logo-square" class="logo-square" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Logo quadrado">
+        <img id="logo-wide" class="logo-wide hidden" src="" alt="Logo escrito">
+      </a>
 
-    <button id="menuToggle" class="menu-toggle" aria-label="Abrir menu">
-      <span></span><span></span><span></span>
-    </button>
+      <ul class="menu-desktop" id="menu-desktop">
+        <!-- Menu renderizado via JS -->
+      </ul>
 
-    <nav id="mainMenu" class="main-menu">
-      <ul id="menuList" class="menu-list"><!-- injetado via JS --></ul>
+      <button class="menu-toggle-btn" onclick="toggleMobileMenu()" aria-label="Abrir menu">☰</button>
     </nav>
-  </div>
-</header>
+  </header>
 
-<!-- ===== MAIN ===== -->
-<main class="container">
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <ul id="mobile-menu-list">
+      <!-- Menu mobile renderizado via JS -->
+    </ul>
+  </div>
+
+  <!-- Hero -->
   <section class="hero">
-    <h1 id="heroTitle">Catálogo</h1>
-    <p id="heroSubtitle">Produtos selecionados a dedo.</p>
+    <h1>Seu Catálogo Gamer</h1>
+    <p>Produtos selecionados, visual moderno e navegação fluida. Gerencie tudo pelo painel administrativo exclusivo.</p>
   </section>
 
-  <section id="cardsGrid" class="cards-grid"></section>
-
-  <div id="pagination" class="pagination"></div>
-</main>
-
-<!-- ===== MODAL PRODUTO ===== -->
-<div id="productModal" class="modal hidden">
-  <div class="modal-content">
-    <button class="modal-close" data-close>&times;</button>
-    <img id="modalImg" class="modal-img" alt="" />
-    <h2 id="modalTitle"></h2>
-    <p id="modalDesc"></p>
-    <div id="modalTriggers" class="triggers"></div>
-    <p class="modal-info"><strong>Alcance:</strong> <span id="modalScope"></span></p>
-    <p class="modal-info" id="modalCitiesWrap" hidden><strong>Cidades:</strong> <span id="modalCities"></span></p>
-    <p class="modal-price" id="modalPrice"></p>
-    <button class="buy-btn" id="buyBtn">Comprar agora</button>
-  </div>
-</div>
-
-<!-- ===== MODAL LOGIN ADMIN ===== -->
-<div id="loginModal" class="modal hidden">
-  <div class="modal-content small">
-    <button class="modal-close" data-close>&times;</button>
-    <h2>Área Restrita</h2>
-    <form id="loginForm" class="login-form">
-      <input type="email" id="loginEmail" placeholder="E-mail" required />
-      <input type="password" id="loginPass" placeholder="Senha" required />
-      <button type="submit" id="loginBtn">Entrar</button>
-    </form>
-    <div id="loginLoader" class="loader hidden"><div class="loader-ring"></div></div>
-    <p id="loginError" class="error-msg"></p>
-  </div>
-</div>
-
-<!-- ===== PAINEL ADMIN ===== -->
-<div id="adminPanel" class="admin-panel hidden">
-  <div class="admin-header">
-    <h2>Painel Administrativo</h2>
-    <div>
-      <button id="logoutBtn" class="btn-outline">Sair</button>
-      <button id="closeAdmin" class="btn-outline">Fechar</button>
+  <!-- Catálogo -->
+  <section id="produtos" class="catalogo">
+    <h2>Produtos em destaque</h2>
+    <div class="grid" id="produtos-grid">
+      <!-- Cards renderizados via JS -->
     </div>
-  </div>
+    <div class="pagination" id="pagination">
+      <!-- Paginação via JS -->
+    </div>
+  </section>
 
-  <div class="admin-tabs">
-    <button class="tab-btn active" data-tab="tabProducts">Produtos</button>
-    <button class="tab-btn" data-tab="tabMenu">Menu</button>
-    <button class="tab-btn" data-tab="tabBrand">Marca</button>
-    <button class="tab-btn" data-tab="tabFooter">Rodapé</button>
-  </div>
+  <!-- Painel Admin -->
+  <section id="admin-panel" class="admin-panel hidden">
+    <h2>⚙️ Painel Administrativo</h2>
 
-  <!-- Produtos -->
-  <section id="tabProducts" class="tab-section active">
-    <h3>Adicionar / Editar Produto</h3>
-    <form id="productForm" class="admin-form">
-      <input type="hidden" id="prodId" />
-      <input type="text" id="prodTitle" placeholder="Título" required />
-      <textarea id="prodDesc" placeholder="Descrição" required></textarea>
+    <div class="admin-tabs">
+      <button class="tab-btn active" id="btn-produtos-tab">Produtos</button>
+      <button class="tab-btn" id="btn-menu-tab">Menu</button>
+      <button class="tab-btn" id="btn-brand-tab">Marca</button>
+      <button class="tab-btn" id="btn-footer-tab">Rodapé</button>
+    </div>
 
-      <label>Imagem por arquivo (base64):</label>
-      <input type="file" id="prodImgFile" accept="image/*" />
-      <label>Ou por link externo:</label>
-      <input type="url" id="prodImgUrl" placeholder="https://..." />
+    <!-- Produtos -->
+    <div id="produtos-tab" class="admin-section active">
+      <h3 id="produto-form-title">Adicionar produto</h3>
+      <form id="produto-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="produto-titulo">Título</label>
+            <input type="text" id="produto-titulo" required>
+          </div>
+          <div class="form-group">
+            <label for="produto-preco">Preço</label>
+            <input type="number" id="produto-preco" step="0.01" required>
+          </div>
+          <div class="form-group full">
+            <label for="produto-descricao">Descrição</label>
+            <textarea id="produto-descricao" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="produto-cidades">Cidades / Local de venda</label>
+            <input type="text" id="produto-cidades" placeholder="Ex: Nacional ou São Paulo, Rio de Janeiro">
+          </div>
+          <div class="form-group">
+            <label for="produto-comprar">Link de compra</label>
+            <input type="url" id="produto-comprar" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label for="produto-imagem-file">Imagem do produto (arquivo)</label>
+            <input type="file" id="produto-imagem-file" accept="image/*">
+          </div>
+          <div class="form-group">
+            <label for="produto-imagem-url">ou imagem por link externo</label>
+            <input type="url" id="produto-imagem-url" placeholder="https://...">
+          </div>
+          <div class="form-group full">
+            <label>Gatilhos de marketing</label>
+            <div id="triggers-options"></div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-save">Salvar produto</button>
+          <button type="button" id="produto-cancel" class="btn-cancel hidden">Cancelar</button>
+        </div>
+      </form>
 
-      <label>Alcance:</label>
-      <select id="prodScope">
-        <option value="nacional">Nacional</option>
-        <option value="local">Local</option>
-      </select>
-      <input type="text" id="prodCities" placeholder="Cidades disponíveis (separadas por vírgula, se local)" />
-
-      <input type="text" id="prodPrice" placeholder="Preço (ex: R$ 199,90)" required />
-      <input type="url" id="prodBuyLink" placeholder="Link do botão Comprar (opcional)" />
-
-      <label>Gatilhos de marketing:</label>
-      <div id="triggersList" class="triggers-list"></div>
-
-      <div class="form-actions">
-        <button type="submit" class="btn-primary">Salvar</button>
-        <button type="button" id="clearProdForm" class="btn-outline">Limpar</button>
+      <h3 style="margin-top:2rem;">Produtos cadastrados</h3>
+      <div class="admin-list" id="produtos-list">
+        <!-- Lista via JS -->
       </div>
-    </form>
+    </div>
 
-    <h3>Produtos cadastrados</h3>
-    <div id="adminProductsList" class="admin-list"></div>
-  </section>
-
-  <!-- Menu -->
-  <section id="tabMenu" class="tab-section">
-    <h3>Itens de menu</h3>
-    <form id="menuForm" class="admin-form">
-      <input type="hidden" id="menuId" />
-      <input type="text" id="menuLabel" placeholder="Nome do item" required />
-      <input type="text" id="menuLink" placeholder="Link (#ancora ou URL)" />
-      <input type="text" id="menuParent" placeholder="ID do item pai (deixe vazio para item raiz)" />
-      <div class="form-actions">
-        <button type="submit" class="btn-primary">Salvar item</button>
-        <button type="button" id="clearMenuForm" class="btn-outline">Limpar</button>
+    <!-- Menu -->
+    <div id="menu-tab" class="admin-section">
+      <div class="help-text">
+        <strong>Como criar um menu misto (links diretos + submenus):</strong><br>
+        • Para um <strong>link direto</strong> no topo, preencha <em>Nome</em> e <em>Link</em> e deixe <em>Item pai</em> como "Nenhum".<br>
+        • Para criar um <strong>submenu</strong>, primeiro cadastre o item de topo (pode deixar o link em branco). Depois, ao cadastrar um novo item, selecione esse item como <em>Item pai</em>. O sistema detecta automaticamente: itens com filhos viram botões de submenu; itens sem filhos viram links diretos.<br>
+        • Os subitens sempre aparecem como links dentro do menu expandido.
       </div>
-    </form>
-    <div id="adminMenuList" class="admin-list"></div>
-  </section>
 
-  <!-- Marca -->
-  <section id="tabBrand" class="tab-section">
-    <h3>Logo quadrada</h3>
-    <input type="file" id="brandSquareFile" accept="image/*" />
-    <input type="url" id="brandSquareUrl" placeholder="Ou link externo da logo quadrada" />
-    <h3>Logo larga (marca escrita)</h3>
-    <input type="file" id="brandWideFile" accept="image/*" />
-    <input type="url" id="brandWideUrl" placeholder="Ou link externo da logo larga" />
-    <h3>Textos do topo</h3>
-    <input type="text" id="brandHeroTitle" placeholder="Título do hero" />
-    <input type="text" id="brandHeroSubtitle" placeholder="Subtítulo do hero" />
-    <button id="saveBrand" class="btn-primary">Salvar Marca</button>
-  </section>
+      <h3 id="menu-form-title">Adicionar item de menu</h3>
+      <form id="menu-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="menu-name">Nome</label>
+            <input type="text" id="menu-name" required>
+          </div>
+          <div class="form-group">
+            <label for="menu-link">Link</label>
+            <input type="text" id="menu-link" placeholder="#produtos ou https://...">
+          </div>
+          <div class="form-group">
+            <label for="menu-parent">Item pai</label>
+            <select id="menu-parent">
+              <option value="">Nenhum (item de topo)</option>
+              <!-- Preenchido via JS -->
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-save">Salvar item</button>
+          <button type="button" id="menu-cancel" class="btn-cancel hidden">Cancelar</button>
+        </div>
+      </form>
 
-  <!-- Rodapé -->
-  <section id="tabFooter" class="tab-section">
-    <h3>Rodapé</h3>
-    <label>Links úteis (um por linha, formato: Nome | URL)</label>
-    <textarea id="footerLinks" rows="5"></textarea>
-    <label>Redes sociais (um por linha, formato: Nome | URL)</label>
-    <textarea id="footerSocials" rows="5"></textarea>
-    <label>Atribuição / direitos reservados</label>
-    <input type="text" id="footerCopy" placeholder="© 2026 Sua Marca. Todos os direitos reservados." />
-    <button id="saveFooter" class="btn-primary">Salvar Rodapé</button>
-  </section>
-</div>
-
-<!-- ===== FOOTER ===== -->
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-col">
-      <h4>Links úteis</h4>
-      <ul id="footerLinksList"></ul>
+      <h3 style="margin-top:2rem;">Itens do menu</h3>
+      <div class="admin-list" id="menu-list">
+        <!-- Lista via JS -->
+      </div>
     </div>
-    <div class="footer-col">
-      <h4>Redes sociais</h4>
-      <ul id="footerSocialList"></ul>
+
+    <!-- Marca -->
+    <div id="brand-tab" class="admin-section">
+      <h3>Logo e identidade</h3>
+      <form id="brand-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="brand-square-file">Logo quadrada (arquivo)</label>
+            <input type="file" id="brand-square-file" accept="image/*">
+          </div>
+          <div class="form-group">
+            <label for="brand-square-url">ou logo quadrada por link</label>
+            <input type="url" id="brand-square-url" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label for="brand-wide-file">Logo escrita larga (arquivo)</label>
+            <input type="file" id="brand-wide-file" accept="image/*">
+          </div>
+          <div class="form-group">
+            <label for="brand-wide-url">ou logo escrita por link</label>
+            <input type="url" id="brand-wide-url" placeholder="https://...">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-save">Salvar marca</button>
+        </div>
+      </form>
     </div>
-    <div class="footer-col">
-      <p id="footerCopyText">© Sua Marca</p>
+
+    <!-- Rodapé -->
+    <div id="footer-tab" class="admin-section">
+      <h3>Rodapé</h3>
+      <form id="footer-form">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="footer-copyright">Texto de direitos reservados</label>
+            <input type="text" id="footer-copyright-input">
+          </div>
+          <div class="form-group full">
+            <label for="footer-columns-json">Colunas e links (JSON)</label>
+            <textarea id="footer-columns-json" rows="10"></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-save">Salvar rodapé</button>
+        </div>
+      </form>
+    </div>
+
+    <button id="logout-btn" class="btn-danger" style="margin-top:2rem;" type="button">Sair da área administrativa</button>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content" id="footer-columns">
+      <!-- Colunas via JS -->
+    </div>
+    <div class="footer-bottom">
+      <p id="footer-copyright">© Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Área restrita discreta -->
+  <div class="restricted-dot" id="restricted-dot" title="Área restrita"></div>
+
+  <!-- Modal Login -->
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal" style="max-width:420px;">
+      <div class="modal-header">
+        <h3>Área restrita</h3>
+        <button class="modal-close" aria-label="Fechar">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="login-loader" class="login-loader">
+          <div class="spinner"></div>
+          <p class="login-message">Autenticando...</p>
+        </div>
+        <form id="login-form">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label for="login-email">E-mail</label>
+              <input type="email" id="login-email" required autofocus>
+            </div>
+            <div class="form-group full">
+              <label for="login-password">Senha</label>
+              <input type="password" id="login-password" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top:1rem;">Entrar</button>
+        </form>
+      </div>
     </div>
   </div>
-  <button id="adminAccess" class="admin-access" title="Área restrita">·</button>
-</footer>
 
-<script src="script.js"></script>
+  <!-- Modal Produto -->
+  <div class="modal-overlay" id="produto-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Produto</h3>
+        <button class="modal-close" aria-label="Fechar">×</button>
+      </div>
+      <div class="modal-body">
+        <img id="modal-img" class="modal-img" src="" alt="Produto">
+        <p id="modal-desc" class="modal-desc"></p>
+        <div class="modal-info">
+          <div class="info-box">
+            <label>Disponibilidade</label>
+            <span id="modal-cities"></span>
+          </div>
+          <div class="info-box">
+            <label>Preço</label>
+            <span id="modal-price"></span>
+          </div>
+          <div class="info-box">
+            <label>Gatilhos</label>
+            <span id="modal-triggers"></span>
+          </div>
+        </div>
+        <a id="modal-buy" href="#" class="btn-primary" target="_blank">Comprar agora</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Firebase -->
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script src="script.js"></script>
 </body>
 </html>
