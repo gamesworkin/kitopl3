@@ -1,5 +1,5 @@
 /* ============================================================
-   CONFIGURAÇÃO DO FIREBASE
+   CONFIGURAÇÃO DO FIREBASE 
    Substitua os valores abaixo pelas credenciais do SEU projeto.
    Firebase Console -> Configurações do projeto -> Suas apps.
 ============================================================ */
