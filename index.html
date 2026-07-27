@@ -1,15 +1,15 @@
-
-
-<!DOCTYPE html><html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Catálogo Gamer</title>
-<link rel="icon" href="fav.ico" type="image/x-icon">
-<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fav.ico" type="image/x-icon" />
+<link rel="stylesheet" href="style.css" />
 <!-- Firebase SDKs (compat) -->
-
-
-
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -17,8 +17,8 @@
 <header class="site-header">
   <div class="header-inner">
     <div class="brand">
-      <img id="logoSquare" class="logo-square" alt="Logo">
-      <img id="logoWide" class="logo-wide" alt="Marca">
+      <img id="logoSquare" class="logo-square" alt="Logo" />
+      <img id="logoWide" class="logo-wide" alt="Marca" />
     </div>
 
     <button id="menuToggle" class="menu-toggle" aria-label="Abrir menu">
@@ -46,13 +46,13 @@
 <!-- ===== MODAL PRODUTO ===== -->
 <div id="productModal" class="modal hidden">
   <div class="modal-content">
-    <button class="modal-close" data-close="">×</button>
-    <img id="modalImg" class="modal-img" alt="">
+    <button class="modal-close" data-close>&times;</button>
+    <img id="modalImg" class="modal-img" alt="" />
     <h2 id="modalTitle"></h2>
     <p id="modalDesc"></p>
     <div id="modalTriggers" class="triggers"></div>
     <p class="modal-info"><strong>Alcance:</strong> <span id="modalScope"></span></p>
-    
+    <p class="modal-info" id="modalCitiesWrap" hidden><strong>Cidades:</strong> <span id="modalCities"></span></p>
     <p class="modal-price" id="modalPrice"></p>
     <button class="buy-btn" id="buyBtn">Comprar agora</button>
   </div>
@@ -61,11 +61,11 @@
 <!-- ===== MODAL LOGIN ADMIN ===== -->
 <div id="loginModal" class="modal hidden">
   <div class="modal-content small">
-    <button class="modal-close" data-close="">×</button>
+    <button class="modal-close" data-close>&times;</button>
     <h2>Área Restrita</h2>
     <form id="loginForm" class="login-form">
-      <input type="email" id="loginEmail" placeholder="E-mail" required="">
-      <input type="password" id="loginPass" placeholder="Senha" required="">
+      <input type="email" id="loginEmail" placeholder="E-mail" required />
+      <input type="password" id="loginPass" placeholder="Senha" required />
       <button type="submit" id="loginBtn">Entrar</button>
     </form>
     <div id="loginLoader" class="loader hidden"><div class="loader-ring"></div></div>
@@ -94,24 +94,24 @@
   <section id="tabProducts" class="tab-section active">
     <h3>Adicionar / Editar Produto</h3>
     <form id="productForm" class="admin-form">
-      
-      <input type="text" id="prodTitle" placeholder="Título" required="">
-      <textarea id="prodDesc" placeholder="Descrição" required=""></textarea>
+      <input type="hidden" id="prodId" />
+      <input type="text" id="prodTitle" placeholder="Título" required />
+      <textarea id="prodDesc" placeholder="Descrição" required></textarea>
 
       <label>Imagem por arquivo (base64):</label>
-      <input type="file" id="prodImgFile" accept="image/*">
+      <input type="file" id="prodImgFile" accept="image/*" />
       <label>Ou por link externo:</label>
-      <input type="url" id="prodImgUrl" placeholder="https://...">
+      <input type="url" id="prodImgUrl" placeholder="https://..." />
 
       <label>Alcance:</label>
       <select id="prodScope">
         <option value="nacional">Nacional</option>
         <option value="local">Local</option>
       </select>
-      <input type="text" id="prodCities" placeholder="Cidades disponíveis (separadas por vírgula, se local)">
+      <input type="text" id="prodCities" placeholder="Cidades disponíveis (separadas por vírgula, se local)" />
 
-      <input type="text" id="prodPrice" placeholder="Preço (ex: R$ 199,90)" required="">
-      <input type="url" id="prodBuyLink" placeholder="Link do botão Comprar (opcional)">
+      <input type="text" id="prodPrice" placeholder="Preço (ex: R$ 199,90)" required />
+      <input type="url" id="prodBuyLink" placeholder="Link do botão Comprar (opcional)" />
 
       <label>Gatilhos de marketing:</label>
       <div id="triggersList" class="triggers-list"></div>
@@ -130,10 +130,10 @@
   <section id="tabMenu" class="tab-section">
     <h3>Itens de menu</h3>
     <form id="menuForm" class="admin-form">
-      
-      <input type="text" id="menuLabel" placeholder="Nome do item" required="">
-      <input type="text" id="menuLink" placeholder="Link (#ancora ou URL)">
-      <input type="text" id="menuParent" placeholder="ID do item pai (deixe vazio para item raiz)">
+      <input type="hidden" id="menuId" />
+      <input type="text" id="menuLabel" placeholder="Nome do item" required />
+      <input type="text" id="menuLink" placeholder="Link (#ancora ou URL)" />
+      <input type="text" id="menuParent" placeholder="ID do item pai (deixe vazio para item raiz)" />
       <div class="form-actions">
         <button type="submit" class="btn-primary">Salvar item</button>
         <button type="button" id="clearMenuForm" class="btn-outline">Limpar</button>
@@ -145,14 +145,14 @@
   <!-- Marca -->
   <section id="tabBrand" class="tab-section">
     <h3>Logo quadrada</h3>
-    <input type="file" id="brandSquareFile" accept="image/*">
-    <input type="url" id="brandSquareUrl" placeholder="Ou link externo da logo quadrada">
+    <input type="file" id="brandSquareFile" accept="image/*" />
+    <input type="url" id="brandSquareUrl" placeholder="Ou link externo da logo quadrada" />
     <h3>Logo larga (marca escrita)</h3>
-    <input type="file" id="brandWideFile" accept="image/*">
-    <input type="url" id="brandWideUrl" placeholder="Ou link externo da logo larga">
+    <input type="file" id="brandWideFile" accept="image/*" />
+    <input type="url" id="brandWideUrl" placeholder="Ou link externo da logo larga" />
     <h3>Textos do topo</h3>
-    <input type="text" id="brandHeroTitle" placeholder="Título do hero">
-    <input type="text" id="brandHeroSubtitle" placeholder="Subtítulo do hero">
+    <input type="text" id="brandHeroTitle" placeholder="Título do hero" />
+    <input type="text" id="brandHeroSubtitle" placeholder="Subtítulo do hero" />
     <button id="saveBrand" class="btn-primary">Salvar Marca</button>
   </section>
 
@@ -164,7 +164,7 @@
     <label>Redes sociais (um por linha, formato: Nome | URL)</label>
     <textarea id="footerSocials" rows="5"></textarea>
     <label>Atribuição / direitos reservados</label>
-    <input type="text" id="footerCopy" placeholder="© 2026 Sua Marca. Todos os direitos reservados.">
+    <input type="text" id="footerCopy" placeholder="© 2026 Sua Marca. Todos os direitos reservados." />
     <button id="saveFooter" class="btn-primary">Salvar Rodapé</button>
   </section>
 </div>
@@ -187,4 +187,6 @@
   <button id="adminAccess" class="admin-access" title="Área restrita">·</button>
 </footer>
 
-</body></html>
+<script src="script.js"></script>
+</body>
+</html>
