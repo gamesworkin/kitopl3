@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html><html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo Gamer</title>
+<link rel="icon" href="https://id-preview--e877ef4d-5c98-4013-9460-41b2d0138b4a.lovable.app/__l5e/documents/catalogo/fav.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://id-preview--e877ef4d-5c98-4013-9460-41b2d0138b4a.lovable.app/__l5e/documents/catalogo/style.css">
+<!-- Firebase SDKs (compat) -->
+
+
+
+</head>
+<body>
+
+<!-- ===== HEADER / MENU ===== -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <img id="logoSquare" class="logo-square" alt="Logo">
+      <img id="logoWide" class="logo-wide" alt="Marca">
+    </div>
+
+    <button id="menuToggle" class="menu-toggle" aria-label="Abrir menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav id="mainMenu" class="main-menu">
+      <ul id="menuList" class="menu-list"><!-- injetado via JS --></ul>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="container">
+  <section class="hero">
+    <h1 id="heroTitle">Catálogo</h1>
+    <p id="heroSubtitle">Produtos selecionados a dedo.</p>
+  </section>
+
+  <section id="cardsGrid" class="cards-grid"></section>
+
+  <div id="pagination" class="pagination"></div>
+</main>
+
+<!-- ===== MODAL PRODUTO ===== -->
+<div id="productModal" class="modal hidden">
+  <div class="modal-content">
+    <button class="modal-close" data-close="">×</button>
+    <img id="modalImg" class="modal-img" alt="">
+    <h2 id="modalTitle"></h2>
+    <p id="modalDesc"></p>
+    <div id="modalTriggers" class="triggers"></div>
+    <p class="modal-info"><strong>Alcance:</strong> <span id="modalScope"></span></p>
+    
+    <p class="modal-price" id="modalPrice"></p>
+    <button class="buy-btn" id="buyBtn">Comprar agora</button>
+  </div>
+</div>
+
+<!-- ===== MODAL LOGIN ADMIN ===== -->
+<div id="loginModal" class="modal hidden">
+  <div class="modal-content small">
+    <button class="modal-close" data-close="">×</button>
+    <h2>Área Restrita</h2>
+    <form id="loginForm" class="login-form">
+      <input type="email" id="loginEmail" placeholder="E-mail" required="">
+      <input type="password" id="loginPass" placeholder="Senha" required="">
+      <button type="submit" id="loginBtn">Entrar</button>
+    </form>
+    <div id="loginLoader" class="loader hidden"><div class="loader-ring"></div></div>
+    <p id="loginError" class="error-msg"></p>
+  </div>
+</div>
+
+<!-- ===== PAINEL ADMIN ===== -->
+<div id="adminPanel" class="admin-panel hidden">
+  <div class="admin-header">
+    <h2>Painel Administrativo</h2>
+    <div>
+      <button id="logoutBtn" class="btn-outline">Sair</button>
+      <button id="closeAdmin" class="btn-outline">Fechar</button>
+    </div>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="tab-btn active" data-tab="tabProducts">Produtos</button>
+    <button class="tab-btn" data-tab="tabMenu">Menu</button>
+    <button class="tab-btn" data-tab="tabBrand">Marca</button>
+    <button class="tab-btn" data-tab="tabFooter">Rodapé</button>
+  </div>
+
+  <!-- Produtos -->
+  <section id="tabProducts" class="tab-section active">
+    <h3>Adicionar / Editar Produto</h3>
+    <form id="productForm" class="admin-form">
+      
+      <input type="text" id="prodTitle" placeholder="Título" required="">
+      <textarea id="prodDesc" placeholder="Descrição" required=""></textarea>
+
+      <label>Imagem por arquivo (base64):</label>
+      <input type="file" id="prodImgFile" accept="image/*">
+      <label>Ou por link externo:</label>
+      <input type="url" id="prodImgUrl" placeholder="https://...">
+
+      <label>Alcance:</label>
+      <select id="prodScope">
+        <option value="nacional">Nacional</option>
+        <option value="local">Local</option>
+      </select>
+      <input type="text" id="prodCities" placeholder="Cidades disponíveis (separadas por vírgula, se local)">
+
+      <input type="text" id="prodPrice" placeholder="Preço (ex: R$ 199,90)" required="">
+      <input type="url" id="prodBuyLink" placeholder="Link do botão Comprar (opcional)">
+
+      <label>Gatilhos de marketing:</label>
+      <div id="triggersList" class="triggers-list"></div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Salvar</button>
+        <button type="button" id="clearProdForm" class="btn-outline">Limpar</button>
+      </div>
+    </form>
+
+    <h3>Produtos cadastrados</h3>
+    <div id="adminProductsList" class="admin-list"></div>
+  </section>
+
+  <!-- Menu -->
+  <section id="tabMenu" class="tab-section">
+    <h3>Itens de menu</h3>
+    <form id="menuForm" class="admin-form">
+      
+      <input type="text" id="menuLabel" placeholder="Nome do item" required="">
+      <input type="text" id="menuLink" placeholder="Link (#ancora ou URL)">
+      <input type="text" id="menuParent" placeholder="ID do item pai (deixe vazio para item raiz)">
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Salvar item</button>
+        <button type="button" id="clearMenuForm" class="btn-outline">Limpar</button>
+      </div>
+    </form>
+    <div id="adminMenuList" class="admin-list"></div>
+  </section>
+
+  <!-- Marca -->
+  <section id="tabBrand" class="tab-section">
+    <h3>Logo quadrada</h3>
+    <input type="file" id="brandSquareFile" accept="image/*">
+    <input type="url" id="brandSquareUrl" placeholder="Ou link externo da logo quadrada">
+    <h3>Logo larga (marca escrita)</h3>
+    <input type="file" id="brandWideFile" accept="image/*">
+    <input type="url" id="brandWideUrl" placeholder="Ou link externo da logo larga">
+    <h3>Textos do topo</h3>
+    <input type="text" id="brandHeroTitle" placeholder="Título do hero">
+    <input type="text" id="brandHeroSubtitle" placeholder="Subtítulo do hero">
+    <button id="saveBrand" class="btn-primary">Salvar Marca</button>
+  </section>
+
+  <!-- Rodapé -->
+  <section id="tabFooter" class="tab-section">
+    <h3>Rodapé</h3>
+    <label>Links úteis (um por linha, formato: Nome | URL)</label>
+    <textarea id="footerLinks" rows="5"></textarea>
+    <label>Redes sociais (um por linha, formato: Nome | URL)</label>
+    <textarea id="footerSocials" rows="5"></textarea>
+    <label>Atribuição / direitos reservados</label>
+    <input type="text" id="footerCopy" placeholder="© 2026 Sua Marca. Todos os direitos reservados.">
+    <button id="saveFooter" class="btn-primary">Salvar Rodapé</button>
+  </section>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>Links úteis</h4>
+      <ul id="footerLinksList"></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Redes sociais</h4>
+      <ul id="footerSocialList"></ul>
+    </div>
+    <div class="footer-col">
+      <p id="footerCopyText">© Sua Marca</p>
+    </div>
+  </div>
+  <button id="adminAccess" class="admin-access" title="Área restrita">·</button>
+</footer>
+
+
+
+
+</body></html>
