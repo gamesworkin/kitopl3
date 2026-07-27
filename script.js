@@ -4,14 +4,15 @@
    Firebase Console -> Configurações do projeto -> Suas apps.
 ============================================================ */
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
-  projectId: "SEU_PROJETO",
-  storageBucket: "SEU_PROJETO.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:0000000000:web:xxxxxxxxxxxxxxxx"
+  apiKey: "AIzaSyCdbgPcsM-RLHzDkClVToAhGhOizfLvu6o",
+  authDomain: "kitopl2.firebaseapp.com",
+  databaseURL: "https://kitopl2-default-rtdb.firebaseio.com",
+  projectId: "kitopl2",
+  storageBucket: "kitopl2.firebasestorage.app",
+  messagingSenderId: "529504176070",
+  appId: "1:529504176070:web:2c20baf1163b98f563d4c7"
 };
+
 
 /* ============================================================
    E-mail exclusivo do admin
