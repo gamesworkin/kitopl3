@@ -11,6 +11,7 @@ const firebaseConfig = {
   storageBucket: "kitopl2.firebasestorage.app",
   messagingSenderId: "529504176070",
   appId: "1:529504176070:web:2c20baf1163b98f563d4c7"
+
 };
 
 
